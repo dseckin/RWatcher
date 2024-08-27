@@ -1,2 +1,2 @@
 # RWatcher
-Watch given program and restarts if it broken
+Watch the given program and restart if it is broken
