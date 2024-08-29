@@ -54,15 +54,15 @@ fn main() {
                 sleep_time_count = 0;
             }
             Ok(None) => {
-                // Program still running                
-                // Kill the collector program forcibly
+                // Program still running                                
                 if seconds_to_kill == -1 {
                     continue;
                 }
 
-                if sleep_time_count >= seconds_to_kill {
+                if ( seconds_to_check * sleep_time_count ) >= seconds_to_kill {
+                    // Kill the program
                     let _ = collector_process.kill();
-                    // Çıkış durumunu bekleyerek zombie durumunu engelle
+                    // Prevent zombie situation
                     let _ = collector_process.wait();
 
                     collector_process = Command::new(command_string.clone())
