@@ -33,7 +33,7 @@ fn main() {
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
-        .expect("failed to start collector program");
+        .expect("failed to start program");
 
     loop {
         sleep(Duration::from_secs(seconds_to_check.try_into().unwrap()));
@@ -49,7 +49,7 @@ fn main() {
                     .stdout(Stdio::piped())
                     .stderr(Stdio::piped())
                     .spawn()
-                    .expect("failed to start collector program");
+                    .expect("failed to start program");
                 
                 sleep_time_count = 0;
             }
@@ -71,7 +71,7 @@ fn main() {
                         .stdout(Stdio::piped())
                         .stderr(Stdio::piped())
                         .spawn()
-                        .expect("failed to start collector program");
+                        .expect("failed to start program");
 
                     
                     sleep_time_count = 0;
