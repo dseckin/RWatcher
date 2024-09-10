@@ -27,7 +27,7 @@ fn main() {
     };
     
     let mut sleep_time_count = 0;
-    let mut collector_process = Command::new(command_string.clone())
+    let mut called_process = Command::new(command_string.clone())
         .arg(arg_string.clone())
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
@@ -39,11 +39,11 @@ fn main() {
         sleep(Duration::from_secs(seconds_to_check.try_into().unwrap()));
         sleep_time_count += 1;
         
-        match collector_process.try_wait() {
+        match called_process.try_wait() {
             Ok(Some(_)) => {
                 // Program stopped running
                 // Restart the program
-                collector_process = Command::new(command_string.clone())
+                called_process = Command::new(command_string.clone())
                     .arg(arg_string.clone())
                     .stdin(Stdio::null())
                     .stdout(Stdio::piped())
@@ -61,11 +61,11 @@ fn main() {
 
                 if ( seconds_to_check * sleep_time_count ) >= seconds_to_kill {
                     // Kill the program
-                    let _ = collector_process.kill();
+                    let _ = called_process.kill();
                     // Prevent zombie situation
-                    let _ = collector_process.wait();
+                    let _ = called_process.wait();
 
-                    collector_process = Command::new(command_string.clone())
+                    called_process = Command::new(command_string.clone())
                         .arg(arg_string.clone())
                         .stdin(Stdio::null())
                         .stdout(Stdio::piped())
