@@ -2,6 +2,7 @@ use std::process::{Command, Stdio};
 use std::thread::sleep;
 use std::time::Duration;
 use std::env;
+use Utc::Local;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -34,6 +35,7 @@ fn main() {
         .stderr(Stdio::piped())
         .spawn()
         .expect("failed to start program");
+    println!("{} - Program started for the first time.", Local::now().format("%Y-%m-%d %H:%M:%S%.3f");
 
     loop {
         sleep(Duration::from_secs(seconds_to_check.try_into().unwrap()));
@@ -52,6 +54,8 @@ fn main() {
                     .expect("failed to start program");
                 
                 sleep_time_count = 0;
+
+                println!("{} - Program stopped running.", Local::now().format("%Y-%m-%d %H:%M:%S%.3f"));
             }
             Ok(None) => {
                 // Program still running                                
@@ -72,6 +76,8 @@ fn main() {
                         .stderr(Stdio::piped())
                         .spawn()
                         .expect("failed to start program");
+
+                    println!("{} - Program killed and started again.", Local::now().format("%Y-%m-%d %H:%M:%S%.3f"));
 
                     
                     sleep_time_count = 0;
