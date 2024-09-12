@@ -2,7 +2,7 @@ use std::process::{Command, Stdio};
 use std::thread::sleep;
 use std::time::Duration;
 use std::env;
-use Utc::Local;
+use chrono::Utc;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -31,11 +31,11 @@ fn main() {
     let mut called_process = Command::new(command_string.clone())
         .arg(arg_string.clone())
         .stdin(Stdio::null())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
         .spawn()
         .expect("failed to start program");
-    println!("{} - Program started for the first time.", Local::now().format("%Y-%m-%d %H:%M:%S%.3f");
+    println!("{} - Program started for the first time.", Utc::now().format("%Y-%m-%d %H:%M:%S%.3f"));
 
     loop {
         sleep(Duration::from_secs(seconds_to_check.try_into().unwrap()));
@@ -48,14 +48,14 @@ fn main() {
                 called_process = Command::new(command_string.clone())
                     .arg(arg_string.clone())
                     .stdin(Stdio::null())
-                    .stdout(Stdio::piped())
-                    .stderr(Stdio::piped())
+                    .stdout(Stdio::null())
+                    .stderr(Stdio::null())
                     .spawn()
                     .expect("failed to start program");
                 
                 sleep_time_count = 0;
 
-                println!("{} - Program stopped running.", Local::now().format("%Y-%m-%d %H:%M:%S%.3f"));
+                println!("{} - Program stopped running.", Utc::now().format("%Y-%m-%d %H:%M:%S%.3f"));
             }
             Ok(None) => {
                 // Program still running                                
@@ -72,12 +72,12 @@ fn main() {
                     called_process = Command::new(command_string.clone())
                         .arg(arg_string.clone())
                         .stdin(Stdio::null())
-                        .stdout(Stdio::piped())
-                        .stderr(Stdio::piped())
+                        .stdout(Stdio::null())
+                        .stderr(Stdio::null())
                         .spawn()
                         .expect("failed to start program");
 
-                    println!("{} - Program killed and started again.", Local::now().format("%Y-%m-%d %H:%M:%S%.3f"));
+                    println!("{} - Program killed and started again.", Utc::now().format("%Y-%m-%d %H:%M:%S%.3f"));
 
                     
                     sleep_time_count = 0;
