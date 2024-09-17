@@ -62,7 +62,7 @@ fn main() {
                 if seconds_to_kill == -1 {
                     continue;
                 }
-
+                
                 if ( seconds_to_check * sleep_time_count ) >= seconds_to_kill {
                     // Kill the program
                     let _ = called_process.kill();
