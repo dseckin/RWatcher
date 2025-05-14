@@ -3,6 +3,7 @@ use std::thread::sleep;
 use std::time::Duration;
 use std::env;
 use chrono::Utc;
+use std::io::Read;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -31,10 +32,47 @@ fn main() {
     let mut called_process = Command::new(command_string.clone())
         .arg(arg_string.clone())
         .stdin(Stdio::null())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
         .spawn()
         .expect("failed to start program");
+
+
+    // Stdout ve stderr için ayrı reader'lar al
+    let mut stdout_reader = called_process.stdout.take().unwrap();
+    let mut stderr_reader = called_process.stderr.take().unwrap();
+
+    // Process durumunu kontrol etmek için döngü
+    let mut output = Vec::new();
+    let mut error = Vec::new();
+
+    loop {
+        // Process'in bitip bitmediğini kontrol et
+        match called_process.try_wait() {
+            Ok(Some(status)) => {
+                // Process tamamlandı, çıktıları oku
+                stdout_reader.read_to_end(&mut output).unwrap();
+                stderr_reader.read_to_end(&mut error).unwrap();
+                
+                println!("Exit status: {}", status);
+                break;
+            }
+            Ok(None) => {
+                // Process hala çalışıyor, beklemeye devam et
+                std::thread::sleep(std::time::Duration::from_millis(100));
+            }
+            Err(e) => {
+                // Hata durumu
+                eprintln!("Error waiting: {}", e);
+                break;
+            }
+        }
+    }
+
+    // Çıktıları yazdır
+    println!("STDOUT: {}", String::from_utf8_lossy(&output));
+    println!("STDERR: {}", String::from_utf8_lossy(&error));
+
     println!("{} - Program started for the first time.", Utc::now().format("%Y-%m-%d %H:%M:%S%.3f"));
 
     loop {
@@ -48,10 +86,46 @@ fn main() {
                 called_process = Command::new(command_string.clone())
                     .arg(arg_string.clone())
                     .stdin(Stdio::null())
-                    .stdout(Stdio::null())
-                    .stderr(Stdio::null())
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped())
                     .spawn()
                     .expect("failed to start program");
+                
+                // Stdout ve stderr için ayrı reader'lar al
+                let mut stdout_reader = called_process.stdout.take().unwrap();
+                let mut stderr_reader = called_process.stderr.take().unwrap();
+
+                // Process durumunu kontrol etmek için döngü
+                let mut output = Vec::new();
+                let mut error = Vec::new();
+
+                loop {
+                    // Process'in bitip bitmediğini kontrol et
+                    match called_process.try_wait() {
+                        Ok(Some(status)) => {
+                            // Process tamamlandı, çıktıları oku
+                            stdout_reader.read_to_end(&mut output).unwrap();
+                            stderr_reader.read_to_end(&mut error).unwrap();
+                            
+                            println!("Exit status: {}", status);
+                            break;
+                        }
+                        Ok(None) => {
+                            // Process hala çalışıyor, beklemeye devam et
+                            std::thread::sleep(std::time::Duration::from_millis(100));
+                        }
+                        Err(e) => {
+                            // Hata durumu
+                            eprintln!("Error waiting: {}", e);
+                            break;
+                        }
+                    }
+                }
+
+                // Çıktıları yazdır
+                println!("STDOUT: {}", String::from_utf8_lossy(&output));
+                println!("STDERR: {}", String::from_utf8_lossy(&error));
+
                 
                 sleep_time_count = 0;
 
@@ -72,10 +146,47 @@ fn main() {
                     called_process = Command::new(command_string.clone())
                         .arg(arg_string.clone())
                         .stdin(Stdio::null())
-                        .stdout(Stdio::null())
-                        .stderr(Stdio::null())
+                        .stdout(Stdio::piped())
+                        .stderr(Stdio::piped())
                         .spawn()
                         .expect("failed to start program");
+
+
+                    // Stdout ve stderr için ayrı reader'lar al
+                    let mut stdout_reader = called_process.stdout.take().unwrap();
+                    let mut stderr_reader = called_process.stderr.take().unwrap();
+
+                    // Process durumunu kontrol etmek için döngü
+                    let mut output = Vec::new();
+                    let mut error = Vec::new();
+
+                    loop {
+                        // Process'in bitip bitmediğini kontrol et
+                        match called_process.try_wait() {
+                            Ok(Some(status)) => {
+                                // Process tamamlandı, çıktıları oku
+                                stdout_reader.read_to_end(&mut output).unwrap();
+                                stderr_reader.read_to_end(&mut error).unwrap();
+                                
+                                println!("Exit status: {}", status);
+                                break;
+                            }
+                            Ok(None) => {
+                                // Process hala çalışıyor, beklemeye devam et
+                                std::thread::sleep(std::time::Duration::from_millis(100));
+                            }
+                            Err(e) => {
+                                // Hata durumu
+                                eprintln!("Error waiting: {}", e);
+                                break;
+                            }
+                        }
+                    }
+
+                    // Çıktıları yazdır
+                    println!("STDOUT: {}", String::from_utf8_lossy(&output));
+                    println!("STDERR: {}", String::from_utf8_lossy(&error));
+
 
                     println!("{} - Program killed and started again.", Utc::now().format("%Y-%m-%d %H:%M:%S%.3f"));
 
